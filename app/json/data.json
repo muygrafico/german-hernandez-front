@@ -1,19 +1,19 @@
 {
   "categories": [
     {
-      "categori_id": 1,
+      "id": 1,
       "name": "drinks"
     },
     {
-      "categori_id": 2,
+      "id": 2,
       "name": "lunch"
     },
     {
-      "categori_id": 3,
+      "id": 3,
       "name": "food"
     },
     {
-      "categori_id": 4,
+      "id": 4,
       "name": "sea"
     }
   ],

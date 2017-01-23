@@ -1,3 +1,4 @@
+'use strict';
 
 (function () {
 
@@ -21,8 +22,8 @@ Vue.component('inputFilter',{
     },
     methods: {
       resetFilterText: function() {
-        this.filterText = '';
-        this.filter({text: this.filterText});
+        this.filterText = ''
+        this.filter({text: this.filterText})
       }
     },
     props: ['filter']
@@ -38,11 +39,10 @@ Vue.component('filtersMenu',{
 
       <ul class="menu-list">
         <li>
-          <h5>Categories</h5>
-          <ul v-for="filters in filtersSwitch">
-
-            <li v-for="filter in filters">
-              <a>{{ filter.name }}</a>
+          <h5>Filters:</h5>
+          <ul>
+            <li v-for="filter in categories">
+              <a @click="toggleActiveFilter({name: filter.name, id: filter.id })">{{ filter.name }}</a>
             </li>
           </ul>
         </li>
@@ -61,7 +61,7 @@ Vue.component('filtersMenu',{
         // categories: ''
       }
     },
-    props: ['categories', 'filter', 'filtersSwitch']
+    props: ['categories', 'filter', 'toggleActiveFilter']
 })
 
   Vue.component('product',{
@@ -97,7 +97,7 @@ Vue.component('filtersMenu',{
   props: ['img', 'name', 'price', 'description', 'best_seller', 'available', 'id', 'categories', 'storeCategories'],
   computed: {
     pic: function () {
-      return this.img + '/' + Math.floor((Math.random() * 10) + 1);
+      return this.img + '/' + Math.floor((Math.random() * 10) + 1)
     }
   },
   methods: {
@@ -105,9 +105,9 @@ Vue.component('filtersMenu',{
       console.log(product)
     },
     findCategoryById: function (id) {
-      return result = this.storeCategories.filter(function(v) {
-        return v.categori_id === id;
-      })[0].name;
+      return this.storeCategories.filter(function(v) {
+        return v.id === id
+      })[0].name
     }
    }
 
@@ -118,7 +118,7 @@ Vue.component('filtersMenu',{
       `<div class="store">
         <div class="columns">
           <div class="column is-2">
-            <filtersMenu :filter="this.filter" :filtersSwitch="filtersSwitch"> <filtersMenu>
+            <filtersMenu :filter="this.filter" :toggleActiveFilter="toggleActiveFilter" :categories="categories"> <filtersMenu>
           </div>
           <div class="column">
             <div class="columns is-multiline">
@@ -131,7 +131,7 @@ Vue.component('filtersMenu',{
               :available="product.available"
               :id="product.id"
               :categories="product.categories"
-              :storeCategories="filtersSwitch.categories"
+              :storeCategories="categories"
               v-for="product in filteredProducts">
                 <button class="button is-primary" @click="addToCart(product.id)">Add to cart</button>
               </product>
@@ -145,47 +145,39 @@ Vue.component('filtersMenu',{
         products: [],
         filteredProducts: [],
         cart: [],
-        filtersSwitch: {
-          categories: [],
-          other_filters: [
-            {
-              "id": 1,
-              "name": "Available"
-            },
-            {
-              "id": 2,
-              "name": "Unavailable"
-            },
-            {
-              "id": 3,
-              "name": "Best seller"
-            }
-          ],
-          price: [
-            {
-              "id": 1,
-              "name": "Higher than $30,000"
-            },
-            {
-              "id": 2,
-              "name": "Lower than $10,000"
-            }
-          ]
-        }
+        activeFilter: {name: null, id: 0}
+
       }
     }, mounted(){
       axios.get('json/data.json').then(
         (response) => {
-          // this.categories = response.data.categories
-          this.filtersSwitch['categories'] = response.data.categories
+
+          this.categories = response.data.categories
+          this.categories.push({
+            "id": 5,
+            "name": "available"
+          },
+          {
+            "id": 6,
+            "name": "unavailable"
+          },
+          {
+            "id": 7,
+            "name": "best seller"
+          },
+          {
+            "id": 8,
+            "name": "higher than $30,000"
+          },
+          {
+            "id": 9,
+            "name": "lower than $10,000"
+          }
+        )
           this.products = response.data.products
           this.filteredProducts = this.products
 
-          for (x in this.filtersSwitch) {
-            for (y in this.filtersSwitch[x]) {
-              this.filtersSwitch[x][y].status = false
-            }
-          }
+          console.log(this.categories)
         }
       )
     },
@@ -195,26 +187,15 @@ Vue.component('filtersMenu',{
         console.log(this.cart)
       },
       filter: function(options) {
-
         this.filteredProducts = this.products.filter(el => {
-          var result
-          function checkCategory(categoryId) { return categoryId === 3 }
-          result =
-          el.name.toLowerCase().includes(options.text.toLowerCase())
-          && el.categories.find(checkCategory)
-          return result
-
-          // function checkCategory(categoryId) {
-          //   return categoryId === 3 || el.name.toLowerCase().includes(text.toLowerCase())
-          // }
-          //
-          // return el.categories.find(checkCategory)
-          // console.log(el.categories)
-
-
-        });
-
+          return el.name.toLowerCase().includes(options.text.toLowerCase())
+        })
+      },
+      toggleActiveFilter: function(filterObj) {
+        filterObj.id === this.activeFilter.id ? this.activeFilter = {name: null, id: null} : this.activeFilter =  filterObj
+        console.log(this.activeFilter.name)
       }
+
     }
 
   })

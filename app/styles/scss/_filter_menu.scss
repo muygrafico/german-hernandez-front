@@ -3,6 +3,16 @@
 
   ul {
     margin-left: .25em;
-    li { list-style-type: none; }
+    margin-right: 0;
+    padding: 0;
+
+    li {
+      list-style-type: none;
+      a {
+        display: inline-block;
+        padding-right: 10px;
+        text-transform: capitalize;
+      }
+    }
   }
 }
