@@ -12,11 +12,18 @@ Vue.component('inputFilter',{
         v-on:keyup="filter(filterText)"
         v-model="filterText"
         >
+        <a  v-show="this.filterText !== ''" @click="resetFilterText" class="delete is-small"></a>
       </p>
     </div>`,
     data() {
       return {
         filterText: ''
+      }
+    },
+    methods: {
+      resetFilterText: function() {
+        this.filterText = '';
+        this.filter(this.filterText);
       }
     },
     props: ['filter']
@@ -68,10 +75,10 @@ Vue.component('filtersMenu',{
     </aside>`,
     data() {
       return {
-        categories: ''
+        // categories: ''
       }
     },
-    props: ['categories']
+    props: ['categories', 'filter']
 })
 
 
@@ -121,7 +128,7 @@ Vue.component('filtersMenu',{
       `<div class="store">
         <div class="columns">
           <div class="column is-2">
-            <filtersMenu :categories="categories"> <filtersMenu>
+            <filtersMenu :filter="this.filter" :categories="categories"> <filtersMenu>
           </div>
           <div class="column">
             <div class="columns is-multiline">
