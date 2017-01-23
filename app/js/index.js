@@ -23,7 +23,7 @@
       methods: {
         resetFilterText: function() {
           this.filterText = ''
-          this.updateFilterText('')
+          this.updateFilterText(this.filterText)
         }
       },
       props: ['updateFilterText', 'currentActiveFilterId']
@@ -133,12 +133,12 @@
       </div>`,
     data() {
       return {
-        categories: [],
-        products: [],
-        filteredProducts: [],
-        cart: [],
         activeFilter: {name: '', id: 0},
-        filterText: ''
+        cart: [],
+        categories: [],
+        filteredProducts: [],
+        filterText: '',
+        products: []
       }
     }, mounted(){
       axios.get('json/data.json').then(
