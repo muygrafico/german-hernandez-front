@@ -45,6 +45,7 @@
                 v-bind:class="{ 'is-active': filter.id === currentActiveFilterId() }"
                 @click="toggleActiveFilter({name: filter.name, id: filter.id })">{{ filter.name }}</a>
               </li>
+
             </ul>
           </li>
           <li>
@@ -213,6 +214,19 @@
               return el.name.toLowerCase().includes(this.filterText.toLowerCase()) &&
                 categoryId === this.activeFilter.id
               break
+             case 5:
+              return el.name.toLowerCase().includes(this.filterText.toLowerCase()) &&
+              el.best_seller === true
+              break
+             case 6:
+              return el.name.toLowerCase().includes(this.filterText.toLowerCase()) &&
+              el.available === true
+              break
+             case 7:
+              return el.name.toLowerCase().includes(this.filterText.toLowerCase()) &&
+              el.available === false
+              break
+
            }
          })
        });
