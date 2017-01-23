@@ -1,0 +1,77 @@
+@import 'colors';
+
+.product {
+  border: 1px solid $product-border-color;
+  box-shadow: 0 15px 20px -20px $product-show-color;
+  padding: 2em 2em 1.5em;
+
+  &.unavailable {
+    .product-footer {
+      background: $product-border-color;
+      color: $product-unavailable-footer-bg-color;
+    }
+
+    .image {
+      opacity: .3;
+    }
+
+    .name,
+    .description {
+      opacity: .5;
+    }
+  }
+
+  .name {
+    color: $product-name-color;
+    font-size: 1.5em;
+    font-weight: 600;
+    line-height: 1.25em;
+  }
+
+  .best-seller {
+    background: $product-best-seller-bg;
+    border-radius: 50%;
+    color: $product-footer-bg-color;
+    font-size: 1em;
+    height: 18px;
+    line-height: 18px;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 18px;
+  }
+
+  .button-container {
+    margin-top: 15px;
+    text-align: center;
+
+    .button {width: 100%;}
+  }
+
+  .description {
+    color: $product-description-color;
+    font-weight: 300;
+    letter-spacing: .2px;
+    margin-bottom: .5em;
+  }
+
+  .product-footer {
+    background: $product-footer-bg-color;
+    padding: .5em;
+    text-align: center;
+  }
+
+
+  hr {
+    background: transparent;
+    border-bottom: 1px solid $product-hr-color;
+    margin: 1em 0;
+  }
+
+  .image {
+    img {
+      border-radius: 5px;
+      padding-bottom: 10px;
+    }
+  }
+}

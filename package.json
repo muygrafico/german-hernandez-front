@@ -1,0 +1,29 @@
+{
+  "name": "rappi-front",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/muygrafico/german-hernandez-front"
+  },
+  "keywords": [],
+  "author": "@muygrafico",
+  "license": "ISC",
+  "bugs": {
+    "url": "git+https://github.com/muygrafico/german-hernandez-front/issues"
+  },
+  "homepage": "git+https://github.com/muygrafico/german-hernandez-front#readme",
+  "devDependencies": {
+    "browser-sync": "^2.18.1",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.1",
+    "gulp-load-plugins": "^1.4.0",
+    "gulp-plumber": "^1.1.0",
+    "gulp-sass": "^2.3.2",
+    "gulp-scss-lint": "^0.4.0"
+  }
+}
