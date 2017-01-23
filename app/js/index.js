@@ -226,6 +226,14 @@
               return el.name.toLowerCase().includes(this.filterText.toLowerCase()) &&
               el.available === false
               break
+             case 8:
+              return el.name.toLowerCase().includes(this.filterText.toLowerCase()) &&
+              el.price > 30.000
+              break
+             case 9:
+               return el.name.toLowerCase().includes(this.filterText.toLowerCase()) &&
+               el.price < 10.000
+               break
 
            }
          })

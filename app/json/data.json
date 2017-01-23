@@ -23,11 +23,19 @@
     {
       "id": 6,
       "name": "available"
-    }
-    ,
+    },
     {
       "id": 7,
       "name": "unavailable"
+    },
+    {
+      "id": 8,
+      "name": "higher than 30.000"
+    }
+    ,
+    {
+      "id": 9,
+      "name": "lower than 10.000"
     }
   ],
   "products": [
