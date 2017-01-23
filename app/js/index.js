@@ -46,14 +46,14 @@
           <li>
             <h5>Order by:</h5>
             <ul>
-              <li><a>Name</a></li>
-              <li><a>Higher price</a></li>
-              <li><a>Lower price</a></li>
+              <li><a @click="setSortProductType('name')">Name</a></li>
+              <li><a @click="setSortProductType('higher_price')">Higher price</a></li>
+              <li><a @click="setSortProductType('lower_price')">Lower price</a></li>
             </ul>
           </li>
         </ul>
       </aside>`,
-      props: ['categories', 'updateFilterText', 'toggleActiveFilter','currentActiveFilterId']
+      props: ['categories', 'updateFilterText', 'toggleActiveFilter','currentActiveFilterId', 'setSortProductType']
     })
 
   Vue.component('product',{
@@ -85,7 +85,16 @@
           </div>
         </div>
       </div>`,
-      props: ['img', 'name', 'price', 'description', 'best_seller', 'available', 'id', 'productCategories', 'storeCategories'],
+      props: [
+        'img',
+        'name',
+        'price',
+        'description',
+        'best_seller',
+        'available',
+        'id',
+        'productCategories',
+        'storeCategories'],
       computed: {
         pic: function () {
           return this.img + '/' + Math.floor((Math.random() * 10) + 1)
@@ -110,6 +119,7 @@
             :toggleActiveFilter="toggleActiveFilter"
             :categories="categories"
             :currentActiveFilterId="currentActiveFilterId"
+            :setSortProductType="setSortProductType"
             ><filtersMenu>
           </div>
           <div class="column">
@@ -134,6 +144,7 @@
     data() {
       return {
         activeFilter: {name: '', id: 0},
+        sortProductType: 'name',
         cart: [],
         categories: [],
         filteredProducts: [],
@@ -165,8 +176,9 @@
            }
          })
        });
-     },
-     toggleActiveFilter: function(filterObj) {
+       this.sortProducts
+      },
+      toggleActiveFilter: function(filterObj) {
         filterObj.id === this.activeFilter.id ? this.activeFilter = {name: '', id: 0} : this.activeFilter =  filterObj
       },
       currentActiveFilterId: function() {
@@ -175,16 +187,37 @@
       updateFilterText: function(filterText) {
         this.filterText = filterText
         console.log(this.filterText)
-      }
+      },
+      setSortProductType: function(type) {
+        this.sortProductType === type ? this.sortProductType = '' : this.sortProductType = type
+        console.log(this.sortProductType)
+      },
+      sortProducts: function() {
+        switch (this.sortProductType) {
+          case 'name':
+              this.filteredProducts = this.filteredProducts.sort(function (a, b) {
+                console.log(a.name)
+                if (a.name.toLowerCase() > b.name.toLowerCase()) {
+                  return 1;
+                }
+                if (a.name.toLowerCase() < b.name.toLowerCase()) {
+                  return -1;
+                }
+                // a must be equal to b
+                return 0;
+              });
+              console.dir(this.filteredProducts)
+            break;
+          default:
+
+        }
+      },
     },
     watch: {
-     filterText: function () {
-      this.filter()
-     },
-      activeFilter: function () {
-      this.filter()
-     }
-   }
+      filterText: function () { this.filter() },
+      activeFilter: function () { this.filter() },
+      sortProductType: function () { this.sortProducts() }
+    }
   })
 
   new Vue({el: '#storeApp'})
