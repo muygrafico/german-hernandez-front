@@ -19,7 +19,7 @@ Vue.component('inputFilter',{
         filterText: ''
       }
     },
-    props: ['filter'],
+    props: ['filter']
 })
 
 
@@ -105,9 +105,9 @@ Vue.component('inputFilter',{
         console.log(this.cart)
       },
       filter: function(text) {
-        
+
         this.filteredProducts = this.products.filter(el => {
-          return el.name.includes(text)
+          return el.name.toLowerCase().includes(text.toLowerCase())
         });
 
       }
