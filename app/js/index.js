@@ -8,11 +8,10 @@ Vue.component('inputFilter',{
         <input
         class="input"
         type="text"
-        placeholder="Enter new search"
-        v-on:keyup="filter(filterText)"
-        v-model="filterText"
-        >
-        <a  v-show="this.filterText !== ''" @click="resetFilterText" class="delete is-small"></a>
+        placeholder="Search"
+        v-on:keyup="filter({text: filterText})"
+        v-model="filterText">
+        <a v-show="this.filterText !== ''" @click="resetFilterText" class="delete is-small"></a>
       </p>
     </div>`,
     data() {
@@ -23,7 +22,7 @@ Vue.component('inputFilter',{
     methods: {
       resetFilterText: function() {
         this.filterText = '';
-        this.filter(this.filterText);
+        this.filter({text: this.filterText});
       }
     },
     props: ['filter']
@@ -40,27 +39,11 @@ Vue.component('filtersMenu',{
       <ul class="menu-list">
         <li>
           <h5>Categories</h5>
-          <ul>
-            <li v-for="category in categories">
-              <a>{{ category.name }}</a>
+          <ul v-for="filters in filtersSwitch">
+
+            <li v-for="filter in filters">
+              <a>{{ filter.name }}</a>
             </li>
-          </ul>
-        </li>
-
-        <li>
-          <h5>Other filters</h5>
-          <ul>
-            <li><a>Available</a></li>
-            <li><a>Unvailable</a></li>
-            <li><a>Best seller</a></li>
-          </ul>
-        </li>
-
-        <li>
-          <h5>Price</h5>
-          <ul>
-            <li><a>Higher than $30,000</a></li>
-            <li><a>Lower than $10,000</a></li>
           </ul>
         </li>
         <li>
@@ -78,9 +61,8 @@ Vue.component('filtersMenu',{
         // categories: ''
       }
     },
-    props: ['categories', 'filter']
+    props: ['categories', 'filter', 'filtersSwitch']
 })
-
 
   Vue.component('product',{
     template:
@@ -99,7 +81,6 @@ Vue.component('filtersMenu',{
           </div>
           <div class="product-footer">
             <div class="price">$\{{ price }}</div>
-
           </div>
           <div class="button-container">
             <div v-show="available"><slot></slot></div>
@@ -107,9 +88,13 @@ Vue.component('filtersMenu',{
               Not available
             </span>
           </div>
+          <div class="product-categories">
+
+            <span v-for="category in categories" class="category-text tag">{{ findCategoryById(category) }}</span>
+          </div>
         </div>
       </div>`,
-  props: ['img', 'name', 'price', 'description', 'best_seller', 'available', 'id'],
+  props: ['img', 'name', 'price', 'description', 'best_seller', 'available', 'id', 'categories', 'storeCategories'],
   computed: {
     pic: function () {
       return this.img + '/' + Math.floor((Math.random() * 10) + 1);
@@ -118,6 +103,11 @@ Vue.component('filtersMenu',{
   methods: {
     addToCart: function (product) {
       console.log(product)
+    },
+    findCategoryById: function (id) {
+      return result = this.storeCategories.filter(function(v) {
+        return v.categori_id === id;
+      })[0].name;
     }
    }
 
@@ -128,7 +118,7 @@ Vue.component('filtersMenu',{
       `<div class="store">
         <div class="columns">
           <div class="column is-2">
-            <filtersMenu :filter="this.filter" :categories="categories"> <filtersMenu>
+            <filtersMenu :filter="this.filter" :filtersSwitch="filtersSwitch"> <filtersMenu>
           </div>
           <div class="column">
             <div class="columns is-multiline">
@@ -140,7 +130,8 @@ Vue.component('filtersMenu',{
               :best_seller="product.best_seller"
               :available="product.available"
               :id="product.id"
-
+              :categories="product.categories"
+              :storeCategories="filtersSwitch.categories"
               v-for="product in filteredProducts">
                 <button class="button is-primary" @click="addToCart(product.id)">Add to cart</button>
               </product>
@@ -153,14 +144,48 @@ Vue.component('filtersMenu',{
         categories: [],
         products: [],
         filteredProducts: [],
-        cart: []
+        cart: [],
+        filtersSwitch: {
+          categories: [],
+          other_filters: [
+            {
+              "id": 1,
+              "name": "Available"
+            },
+            {
+              "id": 2,
+              "name": "Unavailable"
+            },
+            {
+              "id": 3,
+              "name": "Best seller"
+            }
+          ],
+          price: [
+            {
+              "id": 1,
+              "name": "Higher than $30,000"
+            },
+            {
+              "id": 2,
+              "name": "Lower than $10,000"
+            }
+          ]
+        }
       }
     }, mounted(){
       axios.get('json/data.json').then(
         (response) => {
-          this.categories = response.data.categories
+          // this.categories = response.data.categories
+          this.filtersSwitch['categories'] = response.data.categories
           this.products = response.data.products
           this.filteredProducts = this.products
+
+          for (x in this.filtersSwitch) {
+            for (y in this.filtersSwitch[x]) {
+              this.filtersSwitch[x][y].status = false
+            }
+          }
         }
       )
     },
@@ -169,10 +194,24 @@ Vue.component('filtersMenu',{
         this.cart.push(productId)
         console.log(this.cart)
       },
-      filter: function(text) {
+      filter: function(options) {
 
         this.filteredProducts = this.products.filter(el => {
-          return el.name.toLowerCase().includes(text.toLowerCase())
+          var result
+          function checkCategory(categoryId) { return categoryId === 3 }
+          result =
+          el.name.toLowerCase().includes(options.text.toLowerCase())
+          && el.categories.find(checkCategory)
+          return result
+
+          // function checkCategory(categoryId) {
+          //   return categoryId === 3 || el.name.toLowerCase().includes(text.toLowerCase())
+          // }
+          //
+          // return el.categories.find(checkCategory)
+          // console.log(el.categories)
+
+
         });
 
       }
