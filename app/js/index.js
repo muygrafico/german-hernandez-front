@@ -46,14 +46,14 @@
           <li>
             <h5>Order by:</h5>
             <ul>
-              <li><a @click="setSortProductType('name')">Name</a></li>
-              <li><a @click="setSortProductType('higher_price')">Higher price</a></li>
-              <li><a @click="setSortProductType('lower_price')">Lower price</a></li>
+              <li><a v-bind:class="{ 'is-active': sortProductType === 'name' }" @click="setSortProductType('name')">Name</a></li>
+              <li><a v-bind:class="{ 'is-active': sortProductType === 'higher_price' }" @click="setSortProductType('higher_price')">Higher price</a></li>
+              <li><a v-bind:class="{ 'is-active': sortProductType === 'lower_price' }" @click="setSortProductType('lower_price')">Lower price</a></li>
             </ul>
           </li>
         </ul>
       </aside>`,
-      props: ['categories', 'updateFilterText', 'toggleActiveFilter','currentActiveFilterId', 'setSortProductType']
+      props: ['categories', 'updateFilterText', 'toggleActiveFilter','currentActiveFilterId', 'setSortProductType', 'sortProductType']
     })
 
   Vue.component('product',{
@@ -120,6 +120,7 @@
             :categories="categories"
             :currentActiveFilterId="currentActiveFilterId"
             :setSortProductType="setSortProductType"
+            :sortProductType="sortProductType"
             ><filtersMenu>
           </div>
           <div class="column">
@@ -157,6 +158,7 @@
           this.categories = response.data.categories
           this.products = response.data.products
           this.filteredProducts = this.products
+          this.sortProducts()
         }
       )
     },
@@ -166,7 +168,7 @@
         console.log(this.cart)
       },
       filter: function(options) {
-        console.log(this.activeFilter.id)
+      //  console.log(this.activeFilter.id)
        this.filteredProducts = this.products.filter(el => {
          return el.categories.find((categoryId)=> {
            if (this.activeFilter.id === 0) {
@@ -189,27 +191,34 @@
         console.log(this.filterText)
       },
       setSortProductType: function(type) {
-        this.sortProductType === type ? this.sortProductType = '' : this.sortProductType = type
-        console.log(this.sortProductType)
+        this.sortProductType = type
+      },
+      toNumber: function (badFormatedNumber){
+        var result =  parseFloat(badFormatedNumber, 10) * 1000
+        console.log(badFormatedNumber, result)
+        return result
       },
       sortProducts: function() {
         switch (this.sortProductType) {
           case 'name':
               this.filteredProducts = this.filteredProducts.sort(function (a, b) {
-                console.log(a.name)
                 if (a.name.toLowerCase() > b.name.toLowerCase()) {
                   return 1;
                 }
                 if (a.name.toLowerCase() < b.name.toLowerCase()) {
                   return -1;
                 }
-                // a must be equal to b
                 return 0;
               });
-              console.dir(this.filteredProducts)
             break;
-          default:
-
+            case 'higher_price':
+              // points.sort(function(a, b){return b-a});
+              this.filteredProducts = this.filteredProducts.sort((a, b)=>{return this.toNumber(b.price)-this.toNumber(a.price)});
+              break;
+              case 'lower_price':
+                // points.sort(function(a, b){return b-a});
+                this.filteredProducts = this.filteredProducts.sort((a, b)=>{return this.toNumber(a.price)-this.toNumber(b.price)});
+                break;
         }
       },
     },
