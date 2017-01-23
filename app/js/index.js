@@ -33,27 +33,53 @@
       template:
       `<aside class="menu filter-menu">
         <p class="menu-label"> Filters</p>
-        <inputFilter :updateFilterText="this.updateFilterText" :currentActiveFilterId="currentActiveFilterId"></inputFilter>
+        <inputFilter
+        :updateFilterText="this.updateFilterText"
+        :currentActiveFilterId="currentActiveFilterId"></inputFilter>
         <ul class="menu-list">
           <li>
             <h5>Filters:</h5>
             <ul>
               <li v-for="filter in categories">
-                <a v-bind:class="{ 'is-active': filter.id === currentActiveFilterId() }" @click="toggleActiveFilter({name: filter.name, id: filter.id })">{{ filter.name }}</a>
+                <a
+                v-bind:class="{ 'is-active': filter.id === currentActiveFilterId() }"
+                @click="toggleActiveFilter({name: filter.name, id: filter.id })">{{ filter.name }}</a>
               </li>
             </ul>
           </li>
           <li>
             <h5>Order by:</h5>
             <ul>
-              <li><a v-bind:class="{ 'is-active': sortProductType === 'name' }" @click="setSortProductType('name')">Name</a></li>
-              <li><a v-bind:class="{ 'is-active': sortProductType === 'higher_price' }" @click="setSortProductType('higher_price')">Higher price</a></li>
-              <li><a v-bind:class="{ 'is-active': sortProductType === 'lower_price' }" @click="setSortProductType('lower_price')">Lower price</a></li>
+              <li><a
+                  v-bind:class="{ 'is-active': sortProductType === 'name' }"
+                  @click="setSortProductType('name')">
+                    Name
+                  </a>
+                </li>
+              <li><a
+                  v-bind:class="{ 'is-active': sortProductType === 'higher_price' }"
+                  @click="setSortProductType('higher_price')">
+                    Higher price
+                  </a>
+                </li>
+              <li><a
+                  v-bind:class="{ 'is-active': sortProductType === 'lower_price' }"
+                  @click="setSortProductType('lower_price')">
+                    Lower price
+                  </a>
+                </li>
             </ul>
           </li>
         </ul>
       </aside>`,
-      props: ['categories', 'updateFilterText', 'toggleActiveFilter','currentActiveFilterId', 'setSortProductType', 'sortProductType']
+      props: [
+        'categories',
+        'updateFilterText',
+        'toggleActiveFilter',
+        'currentActiveFilterId',
+        'setSortProductType',
+        'sortProductType'
+      ]
     })
 
   Vue.component('product',{
@@ -81,7 +107,11 @@
             </span>
           </div>
           <div class="product-categories">
-            <span v-for="category in productCategories" class="category-text tag">{{ findCategoryById(category) }}</span>
+            <span
+            v-for="category in productCategories"
+            class="category-text tag">
+              {{ findCategoryById(category) }}
+            </span>
           </div>
         </div>
       </div>`,
@@ -170,18 +200,27 @@
       filter: function(options) {
       //  console.log(this.activeFilter.id)
        this.filteredProducts = this.products.filter(el => {
+
          return el.categories.find((categoryId)=> {
-           if (this.activeFilter.id === 0) {
-             return el.name.toLowerCase().includes(this.filterText.toLowerCase())
-           } else {
-             return el.name.toLowerCase().includes(this.filterText.toLowerCase()) &&  categoryId === this.activeFilter.id
+           switch (this.activeFilter.id) {
+             case 0:
+              return el.name.toLowerCase().includes(this.filterText.toLowerCase())
+              break
+             case 1:
+             case 2:
+             case 3:
+             case 4:
+              return el.name.toLowerCase().includes(this.filterText.toLowerCase()) &&
+                categoryId === this.activeFilter.id
+              break
            }
          })
        });
        this.sortProducts
       },
       toggleActiveFilter: function(filterObj) {
-        filterObj.id === this.activeFilter.id ? this.activeFilter = {name: '', id: 0} : this.activeFilter =  filterObj
+        filterObj.id === this.activeFilter.id ?
+         this.activeFilter = {name: '', id: 0} : this.activeFilter =  filterObj
       },
       currentActiveFilterId: function() {
         return this.activeFilter.id
