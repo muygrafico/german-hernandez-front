@@ -61,6 +61,14 @@
     text-align: center;
   }
 
+  .product-categories {
+    margin-top: 1em;
+
+    .category-text {
+      margin-right: 3px;
+      // padding-right: 5px;
+    }
+  }
 
   hr {
     background: transparent;

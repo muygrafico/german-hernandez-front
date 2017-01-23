@@ -1,7 +1,9 @@
 @import 'colors';
 @import 'product';
-@import 'inputFilter';
+@import 'input_filter';
+@import 'filter_menu';
 
 body {
   font-family: 'Overpass', sans-serif;
+  margin: 1em;
 }

@@ -1,0 +1,15 @@
+.input-filter {
+
+  input {
+    padding-right: 30px;
+  }
+
+  .delete {
+    &.is-small {
+      position: absolute;
+      right: 8px;
+      top: 10px;
+    }
+  }
+
+}
