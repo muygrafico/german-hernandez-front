@@ -188,37 +188,33 @@
       },
       updateFilterText: function(filterText) {
         this.filterText = filterText
-        console.log(this.filterText)
+        // console.log(this.filterText)
       },
       setSortProductType: function(type) {
         this.sortProductType = type
       },
       toNumber: function (badFormatedNumber){
-        var result =  parseFloat(badFormatedNumber, 10) * 1000
-        console.log(badFormatedNumber, result)
-        return result
+        return parseFloat(badFormatedNumber, 10) * 1000
       },
       sortProducts: function() {
         switch (this.sortProductType) {
           case 'name':
-              this.filteredProducts = this.filteredProducts.sort(function (a, b) {
-                if (a.name.toLowerCase() > b.name.toLowerCase()) {
-                  return 1;
-                }
-                if (a.name.toLowerCase() < b.name.toLowerCase()) {
-                  return -1;
-                }
-                return 0;
-              });
+            this.filteredProducts = this.filteredProducts.sort(function (a, b) {
+              if (a.name.toLowerCase() > b.name.toLowerCase()) { return  1 }
+              if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1 }
+              return 0;
+            });
             break;
-            case 'higher_price':
-              // points.sort(function(a, b){return b-a});
-              this.filteredProducts = this.filteredProducts.sort((a, b)=>{return this.toNumber(b.price)-this.toNumber(a.price)});
-              break;
-              case 'lower_price':
-                // points.sort(function(a, b){return b-a});
-                this.filteredProducts = this.filteredProducts.sort((a, b)=>{return this.toNumber(a.price)-this.toNumber(b.price)});
-                break;
+          case 'higher_price':
+            this.filteredProducts = this.filteredProducts.sort((a, b)=>{
+              return this.toNumber(b.price)-this.toNumber(a.price)
+            });
+            break;
+          case 'lower_price':
+            this.filteredProducts = this.filteredProducts.sort((a, b)=>{
+              return this.toNumber(a.price)-this.toNumber(b.price)
+            })
+            break;
         }
       },
     },
