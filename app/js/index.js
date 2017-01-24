@@ -263,10 +263,12 @@
         categories: [],
         filteredProducts: [],
         filterText: '',
-        products: []
+        products: [],
+        jsonURL: 'json/data.json'
+
       }
     }, mounted(){
-      axios.get('json/data.json').then(
+      axios.get(this.jsonURL).then(
         (response) => {
           this.categories = response.data.categories
           this.products = response.data.products
