@@ -2,6 +2,59 @@
 
 (function () {
 
+  Vue.component('cart',{
+    template:
+      `<nav class="level is-mobile">
+
+        <div class="level-item has-text-centered">
+          <div>
+            <p class="heading">Cart</p>
+            <p class="title">{{ cart.length }}</p>
+            <a class="button">
+               View cart
+            </a>
+          </div>
+        </div>
+      </nav>`,
+      props: ['cart']
+    })
+
+    Vue.component('cartModal',{
+      template:
+        `<div class="modal cart-modal" v-bind:class="{ 'is-active': modalActive }">
+          <div class="modal-background" @click="toggleModal"></div>
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Shoping cart</p>
+              <button @click="toggleModal" class="delete"></button>
+            </header>
+            <section class="modal-card-body">
+              <ul>
+                <li v-for="product in cart">{{product}}</li>
+              <ul>
+            </section>
+            <footer class="modal-card-foot">
+              <a class="button is-primary">
+                <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
+                Procced to checkout
+              </a>
+              <a @click="toggleModal" class="button">Cancel</a>
+            </footer>
+          </div>
+        </div>`,
+        data() {
+         return {
+           modalActive: true
+         }
+       },
+       props: ['cart'],
+       methods: {
+         toggleModal: function() {
+           this.modalActive = !this.modalActive
+         }
+       }
+      })
+
   Vue.component('inputFilter',{
     template:
       `<div class="input-filter">
@@ -143,6 +196,8 @@
   Vue.component('store',{
     template:
       `<div class="store">
+        <cartModal :cart="cart"></cartModal>
+        <cart :cart="cart"></cart>
         <div class="columns">
           <div class="column is-2">
             <filtersMenu
