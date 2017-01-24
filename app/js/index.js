@@ -45,6 +45,8 @@
                     <td><a class="button is-small" @click="addToCart(product)">+</a> <a @click="removeFromCart(product)" class="button is-small">-</a></td>
                   </tr>
                 </table>
+
+                <h4 class="total">Total: <strong>$\{{ cartTotal }}<strong><h4>
               </section>
               <footer class="modal-card-foot">
                 <a class="button is-primary">
@@ -61,7 +63,7 @@
            modalActive: false
          }
        },
-       props: ['cart', 'removeFromCart', 'addToCart', 'cartCount'],
+       props: ['cart', 'removeFromCart', 'addToCart', 'cartCount', 'cartTotal'],
        methods: {
          toggleModal: function() {
            this.modalActive = !this.modalActive
@@ -211,7 +213,7 @@
   Vue.component('store',{
     template:
       `<div class="store">
-        <cartModal :cart="cart" :cartCount="cartCount" :addToCart="addToCart" :removeFromCart="removeFromCart"></cartModal>
+        <cartModal :cart="cart" :cartCount="cartCount" :cartTotal="cartTotal" :addToCart="addToCart" :removeFromCart="removeFromCart"></cartModal>
         <div class="columns">
           <div class="column is-2">
             <filtersMenu
@@ -248,6 +250,7 @@
         sortProductType: 'name',
         cart: [],
         cartCount: 0,
+        cartTotal: 0,
         categories: [],
         filteredProducts: [],
         filterText: '',
@@ -274,9 +277,6 @@
 
           if (this.cart[pos].quantity === 1){this.cart[pos].quantity = 2}
           else {this.cart[pos].quantity +=1}
-          console.log(pos)
-          console.log(this.cart[pos].quantity)
-          console.log(this.cart)
           this.cart.sort()
         }
       },
@@ -285,10 +285,9 @@
         if (this.cart[pos].quantity === 1){this.cart.splice(pos, 1)}
         else {this.cart[pos].quantity -=1}
         this.cart.sort()
-        // console.log('removeFromCart',product.name )
+
       },
       filter: function(options) {
-      //  console.log(this.activeFilter.id)
        this.filteredProducts = this.products.filter(el => {
 
          return el.categories.find((categoryId)=> {
@@ -323,7 +322,6 @@
                return el.name.toLowerCase().includes(this.filterText.toLowerCase()) &&
                el.price < 10.000
                break
-
            }
          })
        });
@@ -342,6 +340,14 @@
           count += this.cart[i].quantity
         }
         return count
+      },
+      doCartTotal: function() {
+        var count = 0
+        for (var i in this.cart) {
+          count += Number(this.cart[i].price.toString().split('.').join("")) * this.cart[i].quantity
+        }
+        console.log(count)
+        return count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
       },
       updateFilterText: function(filterText) {
         this.filterText = filterText
@@ -379,7 +385,10 @@
       filterText: function () { this.filter() },
       activeFilter: function () { this.filter() },
       sortProductType: function () { this.sortProducts() },
-      cart: function () { this.cartCount = this.doCartCount() }
+      cart: function () {
+        this.cartCount = this.doCartCount()
+        this.cartTotal = this.doCartTotal()
+      }
     }
   })
 
