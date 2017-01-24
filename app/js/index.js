@@ -5,7 +5,6 @@
   Vue.component('cart',{
     template:
       `<nav class="level is-mobile">
-
         <div class="level-item has-text-centered">
           <div>
             <p class="heading">Products</p>
@@ -17,10 +16,10 @@
         </div>
       </nav>`,
       props: ['cart', 'toggleModal', 'cartCount']
-    })
+  })
 
-    Vue.component('cartModal',{
-      template:
+  Vue.component('cartModal',{
+    template:
         `<div>
           <cart :cart="cart" :cartCount="cartCount" :toggleModal="toggleModal"></cart>
           <div class="modal cart-modal" v-bind:class="{ 'is-active': modalActive }">
@@ -63,13 +62,13 @@
            modalActive: false
          }
        },
-       props: ['cart', 'removeFromCart', 'addToCart', 'cartCount', 'cartTotal'],
-       methods: {
-         toggleModal: function() {
-           this.modalActive = !this.modalActive
-         }
-       }
-      })
+    props: ['cart', 'removeFromCart', 'addToCart', 'cartCount', 'cartTotal'],
+    methods: {
+      toggleModal: function() {
+        this.modalActive = !this.modalActive
+      }
+    }
+  })
 
   Vue.component('inputFilter',{
     template:
@@ -356,12 +355,10 @@
         for (var i in this.cart) {
           count += Number(this.cart[i].price.toString().split('.').join("")) * this.cart[i].quantity
         }
-        console.log(count)
         return count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
       },
       updateFilterText: function(filterText) {
         this.filterText = filterText
-        // console.log(this.filterText)
       },
       setSortProductType: function(type) {
         this.sortProductType = type
