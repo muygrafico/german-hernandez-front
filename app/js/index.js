@@ -264,10 +264,14 @@
         filteredProducts: [],
         filterText: '',
         products: [],
-        jsonURL: 'json/data.json'
+        jsonURL: 'default_json_url/file.json'
 
       }
     }, mounted(){
+      if (getParameterByName('json_url') !== null) {
+        this.jsonURL = getParameterByName('json_url')
+      }
+
       axios.get(this.jsonURL).then(
         (response) => {
           this.categories = response.data.categories
@@ -401,6 +405,11 @@
     }
   })
 
+  function getParameterByName(a,b){b||(b=window.location.href),a=a.replace(/[\[\]]/g,"\\$&");var c=new RegExp("[?&]"+a+"(=([^&#]*)|&|#|$)"),d=c.exec(b);return d?d[2]?decodeURIComponent(d[2].replace(/\+/g," ")):"":null}
+
+  console.log(getParameterByName('json_url'))
   new Vue({el: '#storeApp'})
+
+
 
 })()

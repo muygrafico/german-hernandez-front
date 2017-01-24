@@ -8,7 +8,8 @@ var $ = require('gulp-load-plugins')()
 // Static Server + watching scss/html files
 gulp.task('serve', ['sass'], function () {
   browserSync.init({
-    server: './app'
+    server: './app',
+    startPath: '?json_url=json/data.json'
   })
   gulp.watch('app/*.html').on('change', browserSync.reload)
   gulp.watch('app/js/*.js').on('change', browserSync.reload)
