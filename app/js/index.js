@@ -42,7 +42,7 @@
                     <td>{{ product.name }}</td>
                     <td>{{ product.price }}</td>
                     <td><span class="product-quantity">{{ product.quantity }}</span></td>
-                    <td><a class="button is-small">+</a> <a class="button is-small">-</a></td>
+                    <td><a class="button is-small" @click="addToCart(product)">+</a> <a @click="removeFromCart(product)" class="button is-small">-</a></td>
                   </tr>
                 </table>
               </section>
@@ -61,7 +61,7 @@
            modalActive: false
          }
        },
-       props: ['cart'],
+       props: ['cart', 'removeFromCart', 'addToCart'],
        methods: {
          toggleModal: function() {
            this.modalActive = !this.modalActive
@@ -211,7 +211,7 @@
   Vue.component('store',{
     template:
       `<div class="store">
-        <cartModal :cart="cart"></cartModal>
+        <cartModal :cart="cart" :addToCart="addToCart" :removeFromCart="removeFromCart"></cartModal>
         <div class="columns">
           <div class="column is-2">
             <filtersMenu
@@ -269,15 +269,22 @@
           product.quantity = 1
           this.cart.push(product)
         } else {
-          var pos = this.cart.map((e)=> {return e.id}).indexOf(product.id);
+          var pos = this.cart.map((e)=> {return e.id}).indexOf(product.id)
 
           if (this.cart[pos].quantity === 1){this.cart[pos].quantity = 2}
           else {this.cart[pos].quantity +=1}
           console.log(pos)
           console.log(this.cart[pos].quantity)
           console.log(this.cart)
+          this.cart.sort()
         }
-
+      },
+      removeFromCart: function (product) {
+        var pos = this.cart.map((e)=> {return e.id}).indexOf(product.id)
+        if (this.cart[pos].quantity === 1){this.cart.splice(pos, 1)}
+        else {this.cart[pos].quantity -=1}
+        this.cart.sort()
+        // console.log('removeFromCart',product.name )
       },
       filter: function(options) {
       //  console.log(this.activeFilter.id)
@@ -363,10 +370,11 @@
     watch: {
       filterText: function () { this.filter() },
       activeFilter: function () { this.filter() },
-      sortProductType: function () { this.sortProducts() }
+      sortProductType: function () { this.sortProducts() },
+      cart: function () {}
     }
   })
 
   new Vue({el: '#storeApp'})
 
-})();
+})()
