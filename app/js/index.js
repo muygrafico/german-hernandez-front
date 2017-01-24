@@ -8,43 +8,57 @@
 
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading">Cart</p>
+            <p class="heading">Products</p>
             <p class="title">{{ cart.length }}</p>
-            <a class="button">
+            <a @click="toggleModal" class="button">
                View cart
             </a>
           </div>
         </div>
       </nav>`,
-      props: ['cart']
+      props: ['cart', 'toggleModal']
     })
 
     Vue.component('cartModal',{
       template:
-        `<div class="modal cart-modal" v-bind:class="{ 'is-active': modalActive }">
-          <div class="modal-background" @click="toggleModal"></div>
-          <div class="modal-card">
-            <header class="modal-card-head">
-              <p class="modal-card-title">Shoping cart</p>
-              <button @click="toggleModal" class="delete"></button>
-            </header>
-            <section class="modal-card-body">
-              <ul>
-                <li v-for="product in cart">{{product}}</li>
-              <ul>
-            </section>
-            <footer class="modal-card-foot">
-              <a class="button is-primary">
-                <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
-                Procced to checkout
-              </a>
-              <a @click="toggleModal" class="button">Cancel</a>
-            </footer>
+        `<div>
+          <cart :cart="cart" :toggleModal="toggleModal"></cart>
+          <div class="modal cart-modal" v-bind:class="{ 'is-active': modalActive }">
+            <div class="modal-background" @click="toggleModal"></div>
+            <div class="modal-card">
+              <header class="modal-card-head">
+                <p class="modal-card-title">Shoping cart</p>
+                <button @click="toggleModal" class="delete"></button>
+              </header>
+              <section class="modal-card-body">
+                <table class="table">
+                  <tr>
+                    <th>product</th>
+                    <th>price</th>
+                    <th>quantity</th>
+                    <th></th>
+                  </tr>
+                  <tr v-for="product in cart">
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price }}</td>
+                    <td><span class="product-quantity">{{ product.quantity }}</span></td>
+                    <td><a class="button is-small">+</a> <a class="button is-small">-</a></td>
+                  </tr>
+                </table>
+              </section>
+              <footer class="modal-card-foot">
+                <a class="button is-primary">
+                  <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
+                  Procced to checkout
+                </a>
+                <a @click="toggleModal" class="button">Cancel</a>
+              </footer>
+            </div>
           </div>
         </div>`,
         data() {
          return {
-           modalActive: true
+           modalActive: false
          }
        },
        props: ['cart'],
@@ -178,7 +192,8 @@
         'available',
         'id',
         'productCategories',
-        'storeCategories'],
+        'storeCategories'
+      ],
       computed: {
         pic: function () {
           return this.img + '/' + Math.floor((Math.random() * 10) + 1)
@@ -197,7 +212,6 @@
     template:
       `<div class="store">
         <cartModal :cart="cart"></cartModal>
-        <cart :cart="cart"></cart>
         <div class="columns">
           <div class="column is-2">
             <filtersMenu
@@ -222,7 +236,7 @@
               :productCategories="product.categories"
               :storeCategories="categories"
               v-for="product in filteredProducts">
-                <button class="button is-primary" @click="addToCart(product.id)">Add to cart</button>
+                <button class="button is-primary" @click="addToCart(product)">Add to cart</button>
               </product>
             </div>
           </div>
@@ -249,9 +263,21 @@
       )
     },
     methods: {
-      addToCart: function (productId) {
-        this.cart.push(productId)
-        console.log(this.cart)
+      addToCart: function (product) {
+        var findResult = this.cart.find((p)=> {return p.id === product.id})
+        if (findResult === undefined) {
+          product.quantity = 1
+          this.cart.push(product)
+        } else {
+          var pos = this.cart.map((e)=> {return e.id}).indexOf(product.id);
+
+          if (this.cart[pos].quantity === 1){this.cart[pos].quantity = 2}
+          else {this.cart[pos].quantity +=1}
+          console.log(pos)
+          console.log(this.cart[pos].quantity)
+          console.log(this.cart)
+        }
+
       },
       filter: function(options) {
       //  console.log(this.activeFilter.id)
