@@ -240,6 +240,16 @@
               v-for="product in filteredProducts">
                 <button class="button is-primary" @click="addToCart(product)">Add to cart</button>
               </product>
+
+              <product
+              v-show="filteredProducts.length === 0"
+              :img="'http://lorempixel.com/200/100/cats/'"
+              :name="'Sorry'"
+              :price="0"
+              :description="'there is no product on current filters'"
+              :available=true
+              :storeCategories="categories">
+              </product>
             </div>
           </div>
         </div>
