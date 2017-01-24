@@ -9,20 +9,20 @@
         <div class="level-item has-text-centered">
           <div>
             <p class="heading">Products</p>
-            <p class="title">{{ cart.length }}</p>
+            <p class="title">{{ cartCount }}</p>
             <a @click="toggleModal" class="button">
                View cart
             </a>
           </div>
         </div>
       </nav>`,
-      props: ['cart', 'toggleModal']
+      props: ['cart', 'toggleModal', 'cartCount']
     })
 
     Vue.component('cartModal',{
       template:
         `<div>
-          <cart :cart="cart" :toggleModal="toggleModal"></cart>
+          <cart :cart="cart" :cartCount="cartCount" :toggleModal="toggleModal"></cart>
           <div class="modal cart-modal" v-bind:class="{ 'is-active': modalActive }">
             <div class="modal-background" @click="toggleModal"></div>
             <div class="modal-card">
@@ -61,7 +61,7 @@
            modalActive: false
          }
        },
-       props: ['cart', 'removeFromCart', 'addToCart'],
+       props: ['cart', 'removeFromCart', 'addToCart', 'cartCount'],
        methods: {
          toggleModal: function() {
            this.modalActive = !this.modalActive
@@ -211,7 +211,7 @@
   Vue.component('store',{
     template:
       `<div class="store">
-        <cartModal :cart="cart" :addToCart="addToCart" :removeFromCart="removeFromCart"></cartModal>
+        <cartModal :cart="cart" :cartCount="cartCount" :addToCart="addToCart" :removeFromCart="removeFromCart"></cartModal>
         <div class="columns">
           <div class="column is-2">
             <filtersMenu
@@ -247,6 +247,7 @@
         activeFilter: {name: '', id: 0},
         sortProductType: 'name',
         cart: [],
+        cartCount: 0,
         categories: [],
         filteredProducts: [],
         filterText: '',
@@ -335,6 +336,13 @@
       currentActiveFilterId: function() {
         return this.activeFilter.id
       },
+      doCartCount: function() {
+        var count = 0
+        for (var i in this.cart) {
+          count += this.cart[i].quantity
+        }
+        return count
+      },
       updateFilterText: function(filterText) {
         this.filterText = filterText
         // console.log(this.filterText)
@@ -371,7 +379,7 @@
       filterText: function () { this.filter() },
       activeFilter: function () { this.filter() },
       sortProductType: function () { this.sortProducts() },
-      cart: function () {}
+      cart: function () { this.cartCount = this.doCartCount() }
     }
   })
 
