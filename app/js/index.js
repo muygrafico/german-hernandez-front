@@ -2,6 +2,74 @@
 
 (function () {
 
+  Vue.component('cart',{
+    template:
+      `<nav class="level is-mobile">
+        <div class="level-item has-text-centered">
+          <div>
+            <p class="heading">Products</p>
+            <p class="title">{{ cartCount }}</p>
+            <a @click="toggleModal" class="button">
+               View cart
+            </a>
+          </div>
+        </div>
+      </nav>`,
+      props: ['cart', 'toggleModal', 'cartCount']
+  })
+
+  Vue.component('cartModal',{
+    template:
+        `<div>
+          <cart :cart="cart" :cartCount="cartCount" :toggleModal="toggleModal"></cart>
+          <div class="modal cart-modal" v-bind:class="{ 'is-active': modalActive }">
+            <div class="modal-background" @click="toggleModal"></div>
+            <div class="modal-card">
+              <header class="modal-card-head">
+                <p class="modal-card-title">Shoping cart</p>
+                <button @click="toggleModal" class="delete"></button>
+              </header>
+              <section class="modal-card-body">
+                <table class="table">
+                  <tr>
+                    <th>product</th>
+                    <th>price</th>
+                    <th>quantity</th>
+                    <th></th>
+                  </tr>
+                  <tr v-for="product in cart">
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price }}</td>
+                    <td><span class="product-quantity">{{ product.quantity }}</span></td>
+                    <td><a class="button is-small" @click="addToCart(product)">+</a> <a @click="removeFromCart(product)" class="button is-small">-</a></td>
+                  </tr>
+                </table>
+
+                <h4 class="total">Total: <strong>$\{{ cartTotal }}<strong><h4>
+              </section>
+              <footer class="modal-card-foot">
+                <a class="button is-primary">
+                  <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
+                  Procced to checkout
+                </a>
+                <a @click="toggleModal" class="button">Cancel</a>
+              </footer>
+            </div>
+          </div>
+        </div>`,
+        data() {
+         return {
+           modalActive: false
+         }
+       },
+    props: ['cart', 'removeFromCart', 'addToCart', 'cartCount', 'cartTotal'],
+    methods: {
+      toggleModal: function() {
+        this.modalActive = !this.modalActive
+      }
+    }
+  })
+
   Vue.component('inputFilter',{
     template:
       `<div class="input-filter">
@@ -125,7 +193,8 @@
         'available',
         'id',
         'productCategories',
-        'storeCategories'],
+        'storeCategories'
+      ],
       computed: {
         pic: function () {
           return this.img + '/' + Math.floor((Math.random() * 10) + 1)
@@ -143,6 +212,7 @@
   Vue.component('store',{
     template:
       `<div class="store">
+        <cartModal :cart="cart" :cartCount="cartCount" :cartTotal="cartTotal" :addToCart="addToCart" :removeFromCart="removeFromCart"></cartModal>
         <div class="columns">
           <div class="column is-2">
             <filtersMenu
@@ -167,7 +237,17 @@
               :productCategories="product.categories"
               :storeCategories="categories"
               v-for="product in filteredProducts">
-                <button class="button is-primary" @click="addToCart(product.id)">Add to cart</button>
+                <button class="button is-primary" @click="addToCart(product)">Add to cart</button>
+              </product>
+
+              <product
+              v-show="filteredProducts.length === 0"
+              :img="'http://lorempixel.com/200/100/cats/'"
+              :name="'Sorry'"
+              :price="0"
+              :description="'there is no product on current filters'"
+              :available=true
+              :storeCategories="categories">
               </product>
             </div>
           </div>
@@ -178,6 +258,8 @@
         activeFilter: {name: '', id: 0},
         sortProductType: 'name',
         cart: [],
+        cartCount: 0,
+        cartTotal: 0,
         categories: [],
         filteredProducts: [],
         filterText: '',
@@ -194,12 +276,27 @@
       )
     },
     methods: {
-      addToCart: function (productId) {
-        this.cart.push(productId)
-        console.log(this.cart)
+      addToCart: function (product) {
+        var findResult = this.cart.find((p)=> {return p.id === product.id})
+        if (findResult === undefined) {
+          product.quantity = 1
+          this.cart.push(product)
+        } else {
+          var pos = this.cart.map((e)=> {return e.id}).indexOf(product.id)
+
+          if (this.cart[pos].quantity === 1){this.cart[pos].quantity = 2}
+          else {this.cart[pos].quantity +=1}
+          this.cart.sort()
+        }
+      },
+      removeFromCart: function (product) {
+        var pos = this.cart.map((e)=> {return e.id}).indexOf(product.id)
+        if (this.cart[pos].quantity === 1){this.cart.splice(pos, 1)}
+        else {this.cart[pos].quantity -=1}
+        this.cart.sort()
+
       },
       filter: function(options) {
-      //  console.log(this.activeFilter.id)
        this.filteredProducts = this.products.filter(el => {
 
          return el.categories.find((categoryId)=> {
@@ -234,7 +331,6 @@
                return el.name.toLowerCase().includes(this.filterText.toLowerCase()) &&
                el.price < 10.000
                break
-
            }
          })
        });
@@ -247,9 +343,22 @@
       currentActiveFilterId: function() {
         return this.activeFilter.id
       },
+      doCartCount: function() {
+        var count = 0
+        for (var i in this.cart) {
+          count += this.cart[i].quantity
+        }
+        return count
+      },
+      doCartTotal: function() {
+        var count = 0
+        for (var i in this.cart) {
+          count += Number(this.cart[i].price.toString().split('.').join("")) * this.cart[i].quantity
+        }
+        return count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      },
       updateFilterText: function(filterText) {
         this.filterText = filterText
-        // console.log(this.filterText)
       },
       setSortProductType: function(type) {
         this.sortProductType = type
@@ -282,10 +391,14 @@
     watch: {
       filterText: function () { this.filter() },
       activeFilter: function () { this.filter() },
-      sortProductType: function () { this.sortProducts() }
+      sortProductType: function () { this.sortProducts() },
+      cart: function () {
+        this.cartCount = this.doCartCount()
+        this.cartTotal = this.doCartTotal()
+      }
     }
   })
 
   new Vue({el: '#storeApp'})
 
-})();
+})()
