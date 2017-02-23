@@ -1,4 +1,4 @@
-# Simple Store - Rappi frontend test
+# VueCart
 
 Simple store with filters and cart functionality, for the current project i used [vue.js](https://www.vuejs.org) as the main framework
 
